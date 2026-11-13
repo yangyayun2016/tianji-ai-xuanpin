@@ -7,6 +7,7 @@ import { parseAppToken } from '@/services/feishu';
 import { FeishuKb } from '@/services/kb';
 import { productDetail, SellerSpriteClient } from '@/services/sellersprite';
 import { DEFAULT_LIMITS, loadSettings, saveSettings, type Limits, type Settings } from '@/utils/storage';
+import { mcpOrigin, type McpConfig } from '@/services/mcp';
 
 const LIMIT_FIELDS: { key: keyof Limits; label: string; hint: string }[] = [
   { key: 'topN', label: '类目样本数', hint: '取类目 TOP N 再切细分市场（100–400）' },
@@ -39,6 +40,10 @@ function Options() {
     }
   };
   const save = async () => {
+    try {
+      const origins = [...new Set(([s.sifMcp, s.keepaMcp, s.seekerMcp]).filter((c) => c.url.trim()).map((c) => `${mcpOrigin(c.url)}/*`))];
+      if (origins.length && !await browser.permissions.request({ origins })) { setSaved('未获得 MCP 域名权限，请授权后保存'); return; }
+    } catch { setSaved('MCP 地址无效：需 HTTPS 或本地回环 HTTP，凭据请填在密钥栏'); return; }
     // 非 OpenAI 官方地址需要单独申请域名权限
     try {
       const origin = new URL(s.openaiBase).origin;
@@ -64,6 +69,18 @@ function Options() {
           测试连接
         </button>{' '}
         <span className="small">{tests.ss}</span>
+      </section>
+
+      <section className="card">
+        <h3>选品调研 MCP 数据源</h3>
+        <p className="small">销量只走 SIF；销售额只走卖家精灵；Coupon / 优惠 / 历史报价只走 Keepa（Dinzee keepa__*）。未配置时保留不可用状态。</p>
+        {([['sifMcp', 'SIF'], ['keepaMcp', 'Keepa（Dinzee）'], ['seekerMcp', 'Seeker / Dinzee']] as const).map(([key, name]) => <fieldset key={key} style={{ border: '1px solid var(--line)', marginBottom: 12 }}>
+          <legend>{name}</legend>
+          <label className="field"><span>MCP 地址</span><input type="url" value={s[key].url} onChange={(e) => patch({ [key]: { ...s[key], url: e.target.value.trim() } })} /></label>
+          <label className="field"><span>鉴权</span><select value={s[key].auth} onChange={(e) => patch({ [key]: { ...s[key], auth: e.target.value as McpConfig['auth'] } })}><option value="bearer">Bearer</option><option value="secret-key">secret-key</option><option value="x-api-key">x-api-key</option><option value="none">无鉴权</option></select></label>
+          <label className="field"><span>密钥</span><input type="password" autoComplete="off" value={s[key].apiKey} onChange={(e) => patch({ [key]: { ...s[key], apiKey: e.target.value.trim() } })} /></label>
+          <label className="field"><span>协议</span><select value={s[key].protocol} onChange={(e) => patch({ [key]: { ...s[key], protocol: e.target.value as McpConfig['protocol'] } })}><option value="streamable">Streamable HTTP</option><option value="direct">直接 tools/call</option></select></label>
+        </fieldset>)}
       </section>
 
       <section className="card">
