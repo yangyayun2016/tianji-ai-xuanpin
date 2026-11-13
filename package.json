@@ -3,10 +3,21 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "workspaces": ["extension"],
+  "engines": {
+    "node": ">=22.12.0",
+    "npm": ">=10"
+  },
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "oxlint",
+    "dev:extension": "npm run dev --workspace extension",
+    "build": "npm run build:web && npm run build:extension",
+    "build:web": "tsc -b && vite build",
+    "build:extension": "npm run build --workspace extension",
+    "typecheck:extension": "npm run compile --workspace extension",
+    "test": "npm run test:extension",
+    "test:extension": "npm test --workspace extension",
+    "lint": "oxlint src vite.config.ts",
     "preview": "vite preview"
   },
   "dependencies": {
