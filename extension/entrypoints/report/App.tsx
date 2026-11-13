@@ -90,6 +90,7 @@ export function App() {
           {demo && <span className="tag warn" style={{ marginLeft: 8 }}>演示数据</span>}
         </div>
         <nav>
+          <a href={pageUrl('/research.html')}>选品调研</a>
           <a href={pageUrl('/report.html')}>历史报告</a>
           <a href={pageUrl('/kb.html')}>团队知识库</a>
           <a href="#" onClick={(e) => (e.preventDefault(), openOptions())}>

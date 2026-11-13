@@ -29,6 +29,9 @@ function Popup() {
   return (
     <div style={{ width: 280, padding: 14, display: 'flex', flexDirection: 'column', gap: 8 }}>
       <b>天机AI选品</b>
+      <button className="btn dark" onClick={() => open('/research.html')}>超级产品开发 · 选品调研</button>
+      <span className="small">16 个选品调研模块 · 支持无密钥演示</span>
+      <b>用爆款做爆款 · 产品升级方向诊断</b>
       {missing.length > 0 && (
         <div className="alert warn">
           还没填写：{missing.join('、')}

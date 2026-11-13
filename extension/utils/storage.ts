@@ -1,5 +1,6 @@
 import { browser } from 'wxt/browser';
 import { DEFAULT_COST, DEFAULT_WEIGHTS, type CostInputs, type Report, type Weights } from '@/core/types';
+import { EMPTY_MCP, type McpConfig } from '@/services/mcp';
 
 /** 插件环境用 chrome.storage.local；普通网页预览时退回 localStorage */
 const hasExt = () => {
@@ -50,6 +51,9 @@ export const DEFAULT_LIMITS: Limits = { topN: 200, benchMax: 6, negPerAsin: 80, 
 
 export interface Settings {
   sellerspriteKey: string;
+  seekerMcp: McpConfig;
+  sifMcp: McpConfig;
+  keepaMcp: McpConfig;
   openaiKey: string;
   openaiBase: string;
   model: string;
@@ -70,6 +74,9 @@ export async function loadSettings(): Promise<Settings> {
   const s = (await get<Partial<Settings>>('pu:settings')) ?? {};
   return {
     sellerspriteKey: s.sellerspriteKey ?? '',
+    seekerMcp: { ...EMPTY_MCP, ...s.seekerMcp },
+    sifMcp: { ...EMPTY_MCP, ...s.sifMcp },
+    keepaMcp: { ...EMPTY_MCP, ...s.keepaMcp },
     openaiKey: s.openaiKey ?? '',
     openaiBase: s.openaiBase ?? 'https://api.openai.com/v1',
     model: s.model ?? 'gpt-4.1-mini',
