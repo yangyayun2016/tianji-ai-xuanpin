@@ -8,9 +8,36 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+.output/
+.wxt/
 dist
 dist-ssr
 *.local
+coverage/
+*.tsbuildinfo
+
+# Local settings and credentials (at every workspace depth)
+.env
+.env.*
+.npmrc
+.yarnrc*
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa*
+id_ed25519*
+credentials*.json
+secrets*.json
+service-account*.json
+
+# Archives and customer research are not product source
+*.zip
+*.7z
+*.rar
+Wynona/
 
 # Editor directories and files
 .vscode/*
